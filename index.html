@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MyPortal · TU Delft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+
+  --brand:#00A6D6;
+  --brand-deep:#00728F;
+  --navy:#0C2340;
+  --bg:#E8EFF3;
+  --surface:#FFFFFF;
+  --surface-2:#F4F8FA;
+  --border:#D8E4EB;
+  --text:#12232E;
+  --text-soft:#5F717C;
+  --text-faint:#8A99A2;
+  --success:#4B9B2E;
+  --success-bg:#E9F5E2;
+  --warn:#E03C31;
+  --test:#A50034;
+  --test-bg:#FBE7EC;
+  --shadow:0 1px 2px rgba(12,35,64,.06),0 8px 24px rgba(12,35,64,.06);
+  --shadow-sm:0 1px 2px rgba(12,35,64,.08);
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --navy:#0A1B2E;
+    --bg:#0B1A26;
+    --surface:#12242F;
+    --surface-2:#0E1E29;
+    --border:#20394A;
+    --text:#E6EEF2;
+    --text-soft:#9DB0BB;
+    --text-faint:#6E828E;
+    --success:#7FC85A;
+    --success-bg:#16301A;
+    --test-bg:#331018;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --navy:#0A1B2E;--bg:#0B1A26;--surface:#12242F;--surface-2:#0E1E29;
+  --border:#20394A;--text:#E6EEF2;--text-soft:#9DB0BB;--text-faint:#6E828E;
+  --success:#7FC85A;--success-bg:#16301A;--test-bg:#331018;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);--shadow-sm:0 1px 2px rgba(0,0,0,.4);
+}
+
+*{box-sizing:inherit}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  font-size:14px;
+  line-height:1.5;
+}
+button{font-family:inherit}
+h1,h2,h3,h4{margin:0;line-height:1.2;color:var(--text)}
+
+/* ---------- Flame emblem ---------- */
+.flame{display:block}
+.flame svg{display:block}
+
+/* ---------- LOGIN ---------- */
+#login{
+  min-height:100%;
+  display:grid;
+  grid-template-columns:1.05fr 1fr;
+}
+.login-brand{
+  position:relative;
+  background:linear-gradient(160deg,var(--brand) 0%,var(--brand-deep) 100%);
+  color:#fff;
+  padding:56px 60px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  overflow:hidden;
+}
+.login-brand::after{
+  content:"";
+  position:absolute;right:-140px;bottom:-160px;
+  width:520px;height:520px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.login-brand::before{
+  content:"";
+  position:absolute;left:-120px;top:-120px;
+  width:360px;height:360px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.brand-lockup{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+.brand-lockup .flame{color:#fff;width:44px}
+.brand-lockup .flame svg{width:44px;height:auto}
+.wordmark{font-weight:800;letter-spacing:-.02em;font-size:26px;line-height:1}
+.wordmark small{display:block;font-weight:600;font-size:11px;letter-spacing:.28em;opacity:.85;margin-top:3px}
+.brand-pitch{position:relative;z-index:1;max-width:420px}
+.brand-pitch h2{color:#fff;font-size:34px;font-weight:700;letter-spacing:-.02em}
+.brand-pitch p{color:rgba(255,255,255,.88);font-size:15px;margin:14px 0 0}
+.brand-foot{position:relative;z-index:1;font-size:12px;color:rgba(255,255,255,.72)}
+
+.login-form-wrap{
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 28px;background:var(--surface);
+}
+.login-card{width:100%;max-width:368px}
+.login-card .flame{color:var(--brand);width:38px;margin-bottom:22px}
+.login-card .flame svg{width:38px;height:auto}
+.login-card h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.login-card .sub{color:var(--text-soft);margin:6px 0 26px;font-size:14px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-soft);margin-bottom:6px}
+.field input{
+  width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:9px;
+  font-size:14px;color:var(--text);background:var(--surface-2);transition:border-color .15s,box-shadow .15s;
+}
+.field input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(0,166,214,.18);background:var(--surface)}
+.pw-wrap{position:relative}
+.pw-toggle{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  border:0;background:transparent;color:var(--text-faint);cursor:pointer;
+  font-size:12px;font-weight:600;padding:6px 8px;border-radius:6px;
+}
+.pw-toggle:hover{color:var(--brand-deep);background:var(--surface-2)}
+.row-between{display:flex;align-items:center;justify-content:space-between;margin:4px 0 22px}
+.row-between label{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text-soft);cursor:pointer}
+.row-between a{color:var(--brand-deep);font-size:13px;text-decoration:none;font-weight:500}
+.row-between a:hover{text-decoration:underline}
+.btn-primary{
+  width:100%;padding:12px;border:0;border-radius:9px;cursor:pointer;
+  background:var(--brand);color:#fff;font-size:15px;font-weight:600;letter-spacing:.01em;
+  transition:background .15s,transform .05s;
+}
+.btn-primary:hover{background:var(--brand-deep)}
+.btn-primary:active{transform:translateY(1px)}
+.login-error{
+  display:none;background:var(--test-bg);color:var(--test);border:1px solid rgba(165,0,52,.25);
+  padding:10px 12px;border-radius:9px;font-size:13px;font-weight:500;margin-bottom:16px;
+}
+.login-error.show{display:block}
+.login-alt{margin-top:24px;font-size:12.5px;color:var(--text-faint);text-align:center;line-height:1.7}
+.login-alt a{color:var(--brand-deep);text-decoration:none}
+
+/* ---------- APP SHELL ---------- */
+#app{min-height:100%;display:flex;flex-direction:column}
+#app[hidden]{display:none}
+.topbar{
+  height:64px;flex:0 0 auto;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:16px;
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+}
+.topbar .lockup{display:flex;align-items:center;gap:12px}
+.topbar .flame{color:var(--brand);width:26px}
+.topbar .flame svg{width:26px;height:auto}
+.topbar .wm{font-weight:800;letter-spacing:-.02em;font-size:18px;color:var(--text)}
+.topbar .wm span{color:var(--brand)}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.iconbtn{
+  position:relative;border:1px solid var(--border);background:var(--surface-2);
+  width:38px;height:38px;border-radius:9px;cursor:pointer;color:var(--text-soft);
+  display:grid;place-items:center;transition:background .15s,color .15s;
+}
+.iconbtn:hover{background:var(--surface);color:var(--brand-deep)}
+.iconbtn .dot{position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--warn);border:2px solid var(--surface)}
+.userchip{display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px 6px 4px 4px;border-radius:10px}
+.userchip:hover{background:var(--surface-2)}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(150deg,var(--brand),var(--brand-deep));color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px}
+.userchip .who{line-height:1.15}
+.userchip .who b{font-size:13.5px;font-weight:600;display:block}
+.userchip .who small{font-size:11.5px;color:var(--text-faint)}
+
+.shell{flex:1;display:flex;min-height:0}
+.sidebar{
+  width:240px;flex:0 0 auto;background:var(--surface);border-right:1px solid var(--border);
+  padding:18px 14px;display:flex;flex-direction:column;gap:3px;
+}
+.nav-label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--text-faint);padding:10px 12px 6px}
+.navitem{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;
+  color:var(--text-soft);font-size:14px;font-weight:500;border:0;background:transparent;width:100%;text-align:left;
+  transition:background .12s,color .12s;
+}
+.navitem svg{width:19px;height:19px;flex:0 0 auto}
+.navitem:hover{background:var(--surface-2);color:var(--text)}
+.navitem.active{background:rgba(0,166,214,.12);color:var(--brand-deep);font-weight:600}
+.navitem .badge{margin-left:auto;background:var(--warn);color:#fff;font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;padding:0 5px}
+.sidebar-foot{margin-top:auto;padding:12px}
+.logout{color:var(--text-soft);font-size:13px;font-weight:500}
+
+.content{flex:1;overflow:auto;min-width:0;padding:26px 30px 60px}
+.view{display:none;max-width:1080px;margin:0 auto}
+.view.active{display:block}
+.page-head{margin-bottom:22px}
+.page-head h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.page-head p{color:var(--text-soft);margin:5px 0 0;font-size:14px}
+
+/* cards / generic */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm)}
+.card-pad{padding:18px 20px}
+.card-title{font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title a{font-size:12.5px;font-weight:600;color:var(--brand-deep);text-decoration:none;cursor:pointer}
+
+/* dashboard */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm)}
+.stat .k{font-size:12px;font-weight:600;color:var(--text-soft);display:flex;align-items:center;gap:8px}
+.stat .k .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff}
+.stat .v{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:10px}
+.stat .v small{font-size:13px;font-weight:600;color:var(--text-faint)}
+.dash-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+
+.today-item{display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--border)}
+.today-item:first-of-type{border-top:0}
+.today-time{flex:0 0 96px;font-size:13px;font-weight:700;color:var(--text)}
+.today-time small{display:block;font-weight:500;color:var(--text-faint);font-size:11.5px}
+.today-body{flex:1;border-left:3px solid var(--c,var(--brand));padding-left:12px}
+.today-body b{font-size:14px;font-weight:600;display:block}
+.today-body span{font-size:12.5px;color:var(--text-soft)}
+.gap-row{display:flex;align-items:center;gap:10px;padding:9px 0;color:var(--text-faint);font-size:12.5px;font-weight:500}
+.gap-row::before,.gap-row::after{content:"";height:1px;background:var(--border);flex:1}
+
+.mini-list{list-style:none;margin:0;padding:0}
+.mini-list li{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--border)}
+.mini-list li:first-child{border-top:0}
+.mini-date{flex:0 0 46px;text-align:center;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:5px 0}
+.mini-date b{display:block;font-size:16px;font-weight:800;line-height:1;color:var(--brand-deep)}
+.mini-date small{font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--text-faint);text-transform:uppercase}
+.mini-info b{font-size:13.5px;font-weight:600;display:block}
+.mini-info span{font-size:12px;color:var(--text-soft)}
+
+/* schedule */
+.week-nav{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.week-nav select{
+  padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);
+  font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;min-width:230px;
+}
+.wbtn{width:38px;height:38px;border:1px solid var(--border);border-radius:9px;background:var(--surface);cursor:pointer;color:var(--text-soft);display:grid;place-items:center}
+.wbtn:hover{background:var(--surface-2);color:var(--brand-deep)}
+.wbtn:disabled{opacity:.4;cursor:not-allowed}
+.today-btn{margin-left:auto;padding:9px 14px;border:1px solid var(--brand);color:var(--brand-deep);background:rgba(0,166,214,.08);border-radius:9px;font-size:13px;font-weight:600;cursor:pointer}
+.today-btn:hover{background:rgba(0,166,214,.16)}
+
+.week-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.day-col{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.day-col.is-today{border-color:var(--brand);box-shadow:0 0 0 2px rgba(0,166,214,.25)}
+.day-head{padding:11px 14px;border-bottom:1px solid var(--border);background:var(--surface-2)}
+.day-head.is-today{background:rgba(0,166,214,.10)}
+.day-head .dow{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text-soft);text-transform:uppercase}
+.day-head .dnum{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-top:1px}
+.day-head .today-tag{font-size:10.5px;font-weight:700;color:var(--brand-deep);letter-spacing:.05em}
+.day-body{padding:12px;display:flex;flex-direction:column;gap:10px;flex:1}
+.lesson{border-radius:10px;background:var(--surface-2);border:1px solid var(--border);border-left:4px solid var(--c,var(--brand));padding:10px 11px}
+.lesson .lt{font-size:12px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+.lesson .lt .type{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint)}
+.lesson .ln{font-size:13px;font-weight:600;margin-top:5px;line-height:1.25}
+.lesson .lm{font-size:11.5px;color:var(--text-soft);margin-top:4px;display:flex;flex-direction:column;gap:2px}
+.lesson.is-test{border-left-color:var(--test);background:var(--test-bg)}
+.lesson.is-test .type{color:var(--test);background:rgba(165,0,52,.12);padding:1px 6px;border-radius:5px}
+.day-empty{color:var(--text-faint);font-size:12.5px;text-align:center;padding:24px 8px;font-weight:500}
+.gap-chip{font-size:11px;color:var(--text-faint);text-align:center;padding:3px;border:1px dashed var(--border);border-radius:8px;font-weight:600}
+
+/* grades */
+.table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.table th{text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.03em;color:var(--text-faint);text-transform:uppercase;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+.table td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:13.5px}
+.table tr:last-child td{border-bottom:0}
+.table .co{display:flex;align-items:center;gap:9px}
+.dotc{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.grade{font-weight:800;font-size:15px}
+.grade.pass{color:var(--success)}
+.grade.pending{color:var(--text-faint);font-weight:600;font-size:13px}
+.pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+.pill.pass{background:var(--success-bg);color:var(--success)}
+.pill.pending{background:var(--surface-2);color:var(--text-faint)}
+
+/* courses */
+.course-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.course-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm);overflow:hidden}
+.course-top{height:6px;background:var(--c,var(--brand))}
+.course-in{padding:16px 18px}
+.course-code{font-size:11.5px;font-weight:700;letter-spacing:.04em;color:var(--text-faint)}
+.course-name{font-size:16px;font-weight:700;margin:4px 0 10px}
+.course-meta{font-size:12.5px;color:var(--text-soft);display:flex;flex-direction:column;gap:4px}
+.course-meta span{display:flex;align-items:center;gap:7px}
+.progress{margin-top:14px}
+.progress .bar{height:7px;background:var(--surface-2);border-radius:20px;overflow:hidden}
+.progress .fill{height:100%;background:var(--c,var(--brand));border-radius:20px}
+.progress .lbl{font-size:11.5px;color:var(--text-faint);margin-top:6px;font-weight:600}
+
+/* messages */
+.msg{display:flex;gap:14px;padding:15px 18px;border-bottom:1px solid var(--border);cursor:pointer;background:var(--surface)}
+.msg:hover{background:var(--surface-2)}
+.msg:last-child{border-bottom:0}
+.msg.unread{background:rgba(0,166,214,.05)}
+.msg .mav{width:40px;height:40px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px}
+.msg .mbody{flex:1;min-width:0}
+.msg .mtop{display:flex;align-items:center;gap:8px}
+.msg .mfrom{font-weight:600;font-size:13.5px}
+.msg.unread .mfrom::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--brand);margin-left:7px;vertical-align:middle}
+.msg .mdate{margin-left:auto;font-size:11.5px;color:var(--text-faint);flex:0 0 auto}
+.msg .msubj{font-size:13px;font-weight:600;margin-top:2px}
+.msg .mprev{font-size:12.5px;color:var(--text-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.footer{max-width:1080px;margin:34px auto 0;color:var(--text-faint);font-size:11.5px;text-align:center;line-height:1.7}
+
+/* stat icon sizing + message detail */
+.stat .ic svg{width:15px;height:15px}
+.backbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-soft);font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;cursor:pointer;margin-bottom:16px}
+.backbtn:hover{background:var(--surface-2);color:var(--brand-deep)}
+.msg-detail-head{display:flex;gap:14px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.msg-detail-head .mav{width:46px;height:46px;border-radius:11px}
+.msg-detail-head h2{font-size:18px;font-weight:700;line-height:1.3}
+.msg-detail-head .meta{font-size:12.5px;color:var(--text-soft);margin-top:4px}
+.msg-detail-body{font-size:14px;line-height:1.75;color:var(--text);white-space:pre-line}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-grid{grid-template-columns:1fr}
+  .week-grid{grid-template-columns:1fr}
+  .course-grid{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  #login{grid-template-columns:1fr}
+  .login-brand{display:none}
+  .shell{flex-direction:column}
+  .sidebar{
+    width:auto;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--border);
+    padding:10px;gap:6px;position:sticky;top:calc(64px + env(safe-area-inset-top,0px));z-index:15;
+  }
+  .nav-label,.sidebar-foot{display:none}
+  .navitem{width:auto;white-space:nowrap;padding:9px 13px}
+  .content{padding:18px 16px 60px}
+  .userchip .who{display:none}
+  .table-wrap{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="login">
+  <div class="login-brand">
+    <div class="brand-lockup">
+      <span class="flame" id="flameA"></span>
+      <div class="wordmark">TU Delft<small>MYPORTAL</small></div>
+    </div>
+    <div class="brand-pitch">
+      <h2>Your studies, all in one place.</h2>
+      <p>Schedules, grades, course materials and campus events for the 2026–2027 academic year.</p>
+    </div>
+    <div class="brand-foot">Delft University of Technology · Student Services</div>
+  </div>
+
+  <div class="login-form-wrap">
+    <form class="login-card" id="loginForm" autocomplete="off">
+      <span class="flame" id="flameB"></span>
+      <h1>Log in to MyPortal</h1>
+      <p class="sub">Use your TU Delft NetID email and password.</p>
+
+      <div class="login-error" id="loginError">Incorrect email or password. Please try again.</div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="name@tudelft.nl" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+          <button type="button" class="pw-toggle" id="pwToggle">Show</button>
+        </div>
+      </div>
+      <div class="row-between">
+        <label><input type="checkbox" id="remember"> Keep me signed in</label>
+        <a href="#" onclick="return false">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn-primary">Log in</button>
+      <div class="login-alt">
+        Problems logging in? Contact the <a href="#" onclick="return false">ICT Service Desk</a>.<br>
+        © 2026 Delft University of Technology
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="lockup">
+      <span class="flame" id="flameC"></span>
+      <div class="wm">TU Delft <span>·</span> MyPortal</div>
+    </div>
+    <div class="topbar-right">
+      <button class="iconbtn" title="Messages" onclick="go('messages')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.6 6.6 12 12.8l8.4-6.2"/></svg>
+        <span class="dot" id="topDot"></span>
+      </button>
+      <div class="userchip">
+        <div class="avatar">ID</div>
+        <div class="who">
+          <b>Ivan Dovhaliuk</b>
+          <small>5842197</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="nav-label">MENU</div>
+      <button class="navitem active" data-view="dashboard" onclick="go('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>
+        Dashboard
+      </button>
+      <button class="navitem" data-view="schedule" onclick="go('schedule')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><rect x="6.8" y="12.6" width="3.4" height="3.4" rx="0.7" fill="currentColor" stroke="none"/></svg>
+        Schedule
+      </button>
+      <button class="navitem" data-view="grades" onclick="go('grades')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><rect x="6" y="10" width="3.3" height="8" rx="1.1"/><rect x="10.85" y="6" width="3.3" height="12" rx="1.1"/><rect x="15.7" y="13" width="3.3" height="5" rx="1.1"/></svg>
+        Grades
+      </button>
+      <button class="navitem" data-view="events" onclick="go('events')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6.5-2.5 8.5-2.5 8.5h17S18 15 18 8.5"/><path d="M13.7 20.5a2 2 0 0 1-3.4 0"/></svg>
+        Events
+      </button>
+      <button class="navitem" data-view="messages" onclick="go('messages')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.6 6.6 12 12.8l8.4-6.2"/></svg>
+        Messages
+        <span class="badge" id="navBadge">2</span>
+      </button>
+      <div class="sidebar-foot">
+        <button class="navitem logout" onclick="logout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Log out
+        </button>
+      </div>
+    </nav>
+
+    <main class="content">
+      <section class="view active" id="view-dashboard"></section>
+      <section class="view" id="view-schedule"></section>
+      <section class="view" id="view-grades"></section>
+      <section class="view" id="view-events"></section>
+      <section class="view" id="view-messages"></section>
+      <div class="footer">
+        Delft University of Technology · MyPortal · Academic year 2026–2027, Quarter 1<br>
+        Signed in as ivandovhaluik@tudelft.nl
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* ============ Flame emblem (inline SVG, injected) ============ */
+const FLAME = '<svg viewBox="0 0 90 120" aria-hidden="true"><path d="M52 3 C 49 24 66 33 66 58 C 66 80 50 86 53 108 C 54 116 49 120 43 118 C 34 115 30 105 32 95 C 34 84 42 80 41 71 C 40 63 33 62 28 68 C 27 55 40 52 41 40 C 42 27 44 15 52 3 Z" fill="currentColor"/></svg>';
+['flameA','flameB','flameC'].forEach(id=>{const el=document.getElementById(id); if(el) el.innerHTML=FLAME;});
+
+/* ============ Auth ============ */
+const CREDENTIALS = { email:'ivandovhaluik@tudelft.nl', password:'Delft@2026' };
+const $ = s => document.querySelector(s);
+
+$('#pwToggle').addEventListener('click', ()=>{
+  const p=$('#password'); const t=$('#pwToggle');
+  if(p.type==='password'){p.type='text';t.textContent='Hide';}else{p.type='password';t.textContent='Show';}
+});
+$('#loginForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const email=$('#email').value.trim().toLowerCase();
+  const pw=$('#password').value;
+  if(email===CREDENTIALS.email && pw===CREDENTIALS.password){
+    $('#loginError').classList.remove('show');
+    $('#login').style.display='none';
+    $('#app').hidden=false;
+    window.scrollTo(0,0);
+  }else{
+    $('#loginError').classList.add('show');
+    $('#password').value='';
+  }
+});
+function logout(){
+  $('#app').hidden=true;
+  $('#login').style.display='grid';
+  $('#password').value=''; $('#email').value='';
+  go('dashboard');
+  window.scrollTo(0,0);
+}
+
+/* ============ Data ============ */
+const COURSES = {
+  oop:  {name:'Programming for Engineers',      code:'WB1002', color:'#0076C2', teacher:'Dr. A. van der Meer', ects:4},
+  calc: {name:'Calculus',                       code:'WI1631', color:'#EC6842', teacher:'Prof. dr. H. de Vries', ects:6},
+  la:   {name:'Linear Algebra',                 code:'WI1632', color:'#4B9B2E', teacher:'Dr. M. Jansen',        ects:4},
+  ads:  {name:'Engineering Mechanics: Statics', code:'WB1620', color:'#6F1D77', teacher:'Dr. ir. P. Bakker',    ects:6},
+  rl:   {name:'Physics',                        code:'TN1611', color:'#A50034', teacher:'Dr. S. Nowak',         ects:5},
+  co:   {name:'Materials Science',              code:'MS1531', color:'#C9A227', teacher:'Ir. T. Visser',        ects:4},
+  wdt:  {name:'Engineering Design Project',     code:'WB1440', color:'#009B77', teacher:'Dr. L. Smit',          ects:5},
+};
+
+const TERM_START = new Date(2026,7,31);   // Mon 31 Aug 2026
+const TERM_END   = new Date(2026,10,12);  // Thu 12 Nov 2026
+const TODAY      = new Date(2026,8,29);   // Tue 29 Sep 2026
+
+const pad = n => String(n).padStart(2,'0');
+const key = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const addDays = (d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MON_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Regular weekly timetable (weekday 1=Mon .. 4=Thu)
+function template(wd){
+  switch(wd){
+    case 1: return [ // Monday · 13:00–17:00
+      {s:'13:00',e:'14:45',c:'oop',t:'Lecture',r:'Drebbelweg-IZ 1'},
+      {s:'15:15',e:'16:45',c:'ads',t:'Tutorial',r:'EWI-Boole'},
+    ];
+    case 2: return [ // Tuesday · 14:00–18:00
+      {s:'14:00',e:'15:45',c:'calc',t:'Lecture',r:'Aula-Hall A'},
+      {s:'16:00',e:'17:45',c:'la',t:'Lecture',r:'Aula-Hall B'},
+    ];
+    case 3: return [ // Wednesday · 13:00–17:00
+      {s:'13:00',e:'14:45',c:'rl',t:'Lecture',r:'EWI-Pi'},
+      {s:'15:00',e:'16:45',c:'wdt',t:'Lab',r:'PC-Hall 2'},
+    ];
+    case 4: return [ // Thursday · 15:00–18:00
+      {s:'15:15',e:'16:45',c:'co',t:'Lecture',r:'EWI-Chip'},
+      {s:'17:00',e:'18:00',c:'oop',t:'Lab',r:'PC-Hall 1'},
+    ];
+    default: return [];
+  }
+}
+
+// Exam/test period — tests start from 3 November
+const TESTS = {
+  '2026-11-03':{s:'14:00',e:'16:00',c:'calc',r:'Sports & Culture-Exam Hall 1'},
+  '2026-11-04':{s:'13:00',e:'15:00',c:'rl',  r:'Sports & Culture-Exam Hall 2'},
+  '2026-11-05':{s:'15:00',e:'17:00',c:'co',  r:'Sports & Culture-Exam Hall 1'},
+  '2026-11-09':{s:'13:00',e:'15:00',c:'oop', r:'Sports & Culture-Exam Hall 3'},
+  '2026-11-10':{s:'14:00',e:'16:00',c:'la',  r:'Sports & Culture-Exam Hall 1'},
+  '2026-11-11':{s:'13:00',e:'15:00',c:'wdt', r:'Sports & Culture-Exam Hall 2'},
+  '2026-11-12':{s:'15:00',e:'17:00',c:'ads', r:'Sports & Culture-Exam Hall 1'},
+};
+
+// Special one-off days
+const SPECIAL = {
+  // Mon 28 Sep — day starts at 14:50
+  '2026-09-28':[
+    {s:'14:50',e:'16:20',c:'oop',t:'Lecture',r:'Drebbelweg-IZ 1'},
+    {s:'16:30',e:'18:00',c:'ads',t:'Tutorial',r:'EWI-Boole'},
+  ],
+  // Tue 29 Sep (today) — 15:00–18:00 with a free slot 16:00–17:00
+  '2026-09-29':[
+    {s:'15:00',e:'16:00',c:'calc',t:'Lecture',r:'Aula-Hall A'},
+    {gap:true,s:'16:00',e:'17:00'},
+    {s:'17:00',e:'18:00',c:'la',t:'Tutorial',r:'Aula-Hall B'},
+  ],
+};
+
+function sessionsFor(d){
+  const k=key(d), wd=d.getDay();
+  if(wd<1||wd>4) return [];            // Mon–Thu only
+  if(TESTS[k]){const x=TESTS[k];return [{...x,t:'Test',test:true}];}
+  if(SPECIAL[k]) return SPECIAL[k];
+  return template(wd);
+}
+
+// Build the list of Mon-start weeks in the term
+function buildWeeks(){
+  const weeks=[]; let w=new Date(TERM_START);
+  while(w<=TERM_END){
+    weeks.push(new Date(w));
+    w=addDays(w,7);
+  }
+  return weeks;
+}
+const WEEKS = buildWeeks();
+function currentWeekIndex(){
+  for(let i=0;i<WEEKS.length;i++){
+    const end=addDays(WEEKS[i],3);
+    if(TODAY>=WEEKS[i] && TODAY<=end) return i;
+    if(TODAY<WEEKS[i]) return i;
+  }
+  return 0;
+}
+
+/* ============ Grades ============ */
+const GRADES = [];
+function termAverage(){
+  const done=GRADES.filter(g=>g.grade!=null);
+  if(done.length===0) return null;
+  return (done.reduce((a,b)=>a+b.grade,0)/done.length).toFixed(1);
+}
+
+/* ============ Events ============ */
+const EVENTS = [
+  {date:'2026-09-14', title:'Guest lecture: Software in Aerospace', place:'EWI-Ampère · 12:45', tag:'Lecture'},
+  {date:'2026-10-02', title:'Delft Career Fair', place:'Aula Congress Centre · 10:00–16:00', tag:'Career'},
+  {date:'2026-10-16', title:'CSE Study Association Symposium', place:'EWI-Boole · 13:00', tag:'Association'},
+  {date:'2026-10-24', title:'Exam registration deadline (Osiris)', place:'Online · 23:59', tag:'Deadline'},
+  {date:'2026-11-03', title:'Midterm test week begins', place:'Sports & Culture Exam Halls', tag:'Exams'},
+  {date:'2026-11-06', title:'Study advisor drop-in hours', place:'Student Central · 11:00–13:00', tag:'Support'},
+];
+
+/* ============ Messages ============ */
+const MESSAGES = [
+  {from:'ICT Service Desk', color:'#0C2340', subj:'Multi-factor authentication reminder', prev:'From 1 October, MFA will be required to sign in to all TU Delft services…', date:'2026-09-27', unread:true,
+   body:`Dear student,
+
+From 1 October 2026, multi-factor authentication (MFA) will be required to sign in to all TU Delft online services, including MyPortal, Brightspace and Osiris.
+
+Please make sure the TU Delft Authenticator app is installed on your phone before this date. You can set it up via My NetID → Security.
+
+If you need help, visit the ICT Service Desk on the ground floor of the Library, or simply reply to this message.
+
+Kind regards,
+ICT Service Desk`},
+  {from:'Prof. dr. H. de Vries', color:'#EC6842', subj:'Calculus midterm test details (3 Nov)', prev:'Dear students, the midterm covers chapters 1–4. The test takes place on…', date:'2026-09-26', unread:true,
+   body:`Dear students,
+
+The Calculus midterm test takes place on Tuesday 3 November, 14:00–16:00, in Exam Hall 1 (Sports & Culture).
+
+The test covers chapters 1 to 4: limits, derivatives, integration techniques and their applications. A formula sheet will be provided. Graphing calculators are not permitted.
+
+Please arrive 15 minutes early and bring your campus card.
+
+Best regards,
+Prof. dr. H. de Vries`},
+  {from:'Education & Student Affairs', color:'#009B77', subj:'Exam registration is now open', prev:'You can now register for Quarter 1 exams in Osiris until 24 October…', date:'2026-09-22', unread:false,
+   body:`Dear student,
+
+Registration for Quarter 1 exams is now open in Osiris and closes on 24 October 2026 at 23:59.
+
+You must register separately for every exam you wish to take. Students who are not registered cannot participate, and late registration is not possible.
+
+Register via Osiris → Enrol → Tests.
+
+Kind regards,
+Education & Student Affairs`},
+  {from:'Study Advisor', color:'#6F1D77', subj:'Welcome to Quarter 1, 2026–2027', prev:'Welcome to the new academic year! Here is everything you need to get started…', date:'2026-08-28', unread:false,
+   body:`Dear Ivan,
+
+Welcome to the first quarter of the 2026–2027 academic year. I hope you are settling in well.
+
+As your study advisor, I am here whenever you have questions about your programme, planning, or anything else that comes up during the year. You can reach me during my weekly drop-in hours or by appointment.
+
+Wishing you a great start,
+Study Advisor · Faculty of Engineering`},
+];
+
+/* ============ Formatting helpers ============ */
+function fmtDate(iso){const [y,m,d]=iso.split('-').map(Number);const dt=new Date(y,m-1,d);return `${DOW_SHORT[dt.getDay()]} ${d} ${MON[m-1]}`;}
+function relDay(iso){const [y,m,d]=iso.split('-').map(Number);const dt=new Date(y,m-1,d);const diff=Math.round((dt-TODAY)/86400000);if(diff===0)return'Today';if(diff===1)return'Tomorrow';if(diff<0)return`${-diff}d ago`;return`in ${diff}d`;}
+function isPast(iso){const [y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d)<TODAY;}
+
+/* ============ Render: Dashboard ============ */
+function renderDashboard(){
+  const hour=15; const greet = hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
+  const today = sessionsFor(TODAY);
+  let todayHTML='';
+  if(today.length===0){todayHTML='<p style="color:var(--text-soft);font-size:13.5px">No classes scheduled for today.</p>';}
+  else{
+    today.forEach(s=>{
+      if(s.gap){todayHTML+=`<div class="gap-row">Free · ${s.s}–${s.e}</div>`;return;}
+      const co=COURSES[s.c];
+      todayHTML+=`<div class="today-item">
+        <div class="today-time">${s.s}<small>${s.e}</small></div>
+        <div class="today-body" style="--c:${s.test?'#A50034':co.color}">
+          <b>${co.name}${s.test?' · Test':''}</b>
+          <span>${s.t} · ${s.r} · ${co.teacher}</span>
+        </div></div>`;
+    });
+  }
+
+  const upcomingEvents = EVENTS.filter(e=>!isPast(e.date)).slice(0,4);
+  const eventsHTML = upcomingEvents.map(e=>{
+    const [y,m,d]=e.date.split('-').map(Number);
+    return `<li>
+      <div class="mini-date"><b>${d}</b><small>${MON[m-1]}</small></div>
+      <div class="mini-info"><b>${e.title}</b><span>${e.place}</span></div>
+    </li>`;
+  }).join('');
+
+  const testCount = Object.keys(TESTS).length;
+  const unread = MESSAGES.filter(m=>m.unread).length;
+
+  document.getElementById('view-dashboard').innerHTML=`
+    <div class="page-head">
+      <h1>${greet}, Ivan</h1>
+      <p>Tuesday, 29 September 2026 · BSc Computer Science and Engineering · Year 1</p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="k"><span class="ic" style="background:#0076C2"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/></svg></span>Enrolled courses</div><div class="v">7</div></div>
+      <div class="stat"><div class="k"><span class="ic" style="background:#4B9B2E"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Term average</div><div class="v">${termAverage() ?? '—'}${termAverage()?'<small> / 10</small>':''}</div></div>
+      <div class="stat"><div class="k"><span class="ic" style="background:#A50034"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V4a1 1 0 0 1 1-1h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><path d="M14 3v5h5M8.5 13.5l1.8 1.8 3.7-3.7"/></svg></span>Upcoming tests</div><div class="v">${testCount}</div></div>
+      <div class="stat"><div class="k"><span class="ic" style="background:#EC6842"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.6 6.6 12 12.8l8.4-6.2"/></svg></span>Unread messages</div><div class="v">${unread}</div></div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="card card-pad">
+        <div class="card-title">Today's schedule <a onclick="go('schedule')">Full timetable →</a></div>
+        ${todayHTML}
+      </div>
+      <div class="card card-pad">
+        <div class="card-title">Upcoming events <a onclick="go('events')">All events →</a></div>
+        <ul class="mini-list">${eventsHTML}</ul>
+      </div>
+    </div>`;
+}
+
+/* ============ Render: Schedule ============ */
+let weekIdx = currentWeekIndex();
+function renderSchedule(){
+  const opts = WEEKS.map((w,i)=>{
+    const end=addDays(w,3);
+    const label=`Week ${i+1} · ${w.getDate()} ${MON[w.getMonth()]} – ${end.getDate()} ${MON[end.getMonth()]}`;
+    return `<option value="${i}" ${i===weekIdx?'selected':''}>${label}</option>`;
+  }).join('');
+
+  const start=WEEKS[weekIdx];
+  let cols='';
+  for(let i=0;i<4;i++){
+    const d=addDays(start,i);
+    const isToday=key(d)===key(TODAY);
+    const ss=sessionsFor(d);
+    let body='';
+    if(ss.length===0){body='<div class="day-empty">No classes</div>';}
+    else{
+      ss.forEach(s=>{
+        if(s.gap){body+=`<div class="gap-chip">Free · ${s.s}–${s.e}</div>`;return;}
+        const co=COURSES[s.c];
+        body+=`<div class="lesson ${s.test?'is-test':''}" style="--c:${co.color}">
+          <div class="lt">${s.s}–${s.e}<span class="type">${s.t}</span></div>
+          <div class="ln">${co.name}</div>
+          <div class="lm"><span>📍 ${s.r}</span><span>${co.code} · ${co.teacher}</span></div>
+        </div>`;
+      });
+    }
+    cols+=`<div class="day-col ${isToday?'is-today':''}">
+      <div class="day-head ${isToday?'is-today':''}">
+        <div class="dow">${DOW[d.getDay()]}</div>
+        <div class="dnum">${d.getDate()} ${MON[d.getMonth()]}</div>
+        ${isToday?'<div class="today-tag">TODAY</div>':''}
+      </div>
+      <div class="day-body">${body}</div>
+    </div>`;
+  }
+
+  const noteTest = weekIdx>=9 ? '<p style="margin-top:16px;font-size:12.5px;color:var(--test);font-weight:600">📝 Test period — from 3 November, sessions marked as tests take place in the exam halls.</p>' : '';
+
+  document.getElementById('view-schedule').innerHTML=`
+    <div class="page-head">
+      <h1>Schedule</h1>
+      <p>Quarter 1 timetable · 31 August – 12 November 2026 · Monday to Thursday</p>
+    </div>
+    <div class="week-nav">
+      <button class="wbtn" id="wPrev" title="Previous week">‹</button>
+      <select id="weekSelect">${opts}</select>
+      <button class="wbtn" id="wNext" title="Next week">›</button>
+      <button class="today-btn" id="wToday">This week</button>
+    </div>
+    <div class="week-grid">${cols}</div>
+    ${noteTest}`;
+
+  document.getElementById('wPrev').disabled = weekIdx===0;
+  document.getElementById('wNext').disabled = weekIdx===WEEKS.length-1;
+  document.getElementById('wPrev').onclick = ()=>{if(weekIdx>0){weekIdx--;renderSchedule();}};
+  document.getElementById('wNext').onclick = ()=>{if(weekIdx<WEEKS.length-1){weekIdx++;renderSchedule();}};
+  document.getElementById('wToday').onclick = ()=>{weekIdx=currentWeekIndex();renderSchedule();};
+  document.getElementById('weekSelect').onchange = e=>{weekIdx=+e.target.value;renderSchedule();};
+}
+
+/* ============ Render: Grades ============ */
+function renderGrades(){
+  if(GRADES.length===0){
+    document.getElementById('view-grades').innerHTML=`
+      <div class="page-head">
+        <h1>Grades</h1>
+        <p>Quarter 1 · 2026–2027</p>
+      </div>
+      <div class="card card-pad" style="text-align:center;padding:56px 24px">
+        <div style="font-size:34px;margin-bottom:10px">📄</div>
+        <h3 style="font-size:16px">No grades available yet</h3>
+        <p style="color:var(--text-soft);font-size:13.5px;margin:8px auto 0;max-width:360px">
+          Your results will appear here once assessments have been graded and published.
+        </p>
+      </div>`;
+    return;
+  }
+  const rows = GRADES.map(g=>{
+    const co=COURSES[g.c];
+    const gradeCell = g.grade!=null
+      ? `<span class="grade pass">${g.grade.toFixed(1)}</span>`
+      : `<span class="grade pending">—</span>`;
+    const status = g.grade!=null
+      ? `<span class="pill pass">Passed</span>`
+      : `<span class="pill pending">Scheduled</span>`;
+    return `<tr>
+      <td><div class="co"><span class="dotc" style="background:${co.color}"></span>${co.name}</div></td>
+      <td>${g.item}</td>
+      <td>${fmtDate(g.date)}</td>
+      <td>${g.w}</td>
+      <td>${gradeCell}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('view-grades').innerHTML=`
+    <div class="page-head">
+      <h1>Grades</h1>
+      <p>Quarter 1 · Term average <b style="color:var(--success)">${termAverage()} / 10</b></p>
+      ${''}
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Course</th><th>Assessment</th><th>Date</th><th>Weight</th><th>Grade</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============ Render: Events ============ */
+function renderEvents(){
+  const rows = EVENTS.map(e=>{
+    const [y,m,d]=e.date.split('-').map(Number);
+    const past=isPast(e.date);
+    return `<li style="${past?'opacity:.55':''}">
+      <div class="mini-date"><b>${d}</b><small>${MON[m-1]}</small></div>
+      <div class="mini-info" style="flex:1">
+        <b>${e.title}</b>
+        <span>${e.place}</span>
+      </div>
+      <div style="align-self:center;text-align:right">
+        <span class="pill ${past?'pending':'pass'}" style="${past?'':'background:rgba(0,166,214,.14);color:var(--brand-deep)'}">${past?'Past':relDay(e.date)}</span>
+      </div>
+    </li>`;
+  }).join('');
+
+  document.getElementById('view-events').innerHTML=`
+    <div class="page-head">
+      <h1>Events</h1>
+      <p>Campus events and academic deadlines · Quarter 1, 2026–2027</p>
+    </div>
+    <div class="card"><ul class="mini-list" style="padding:6px 20px">${rows}</ul></div>`;
+}
+
+/* ============ Render: Courses ============ */
+function renderCourses(){
+  const cards = Object.values(COURSES).map((c,i)=>{
+    const prog = [72,60,68,55,64,58,80][i%7];
+    return `<div class="course-card">
+      <div class="course-top" style="--c:${c.color}"></div>
+      <div class="course-in">
+        <div class="course-code">${c.code} · ${c.ects} ECTS</div>
+        <div class="course-name">${c.name}</div>
+        <div class="course-meta">
+          <span>👤 ${c.teacher}</span>
+          <span>📅 ${courseDays(c)}</span>
+        </div>
+        <div class="progress" style="--c:${c.color}">
+          <div class="bar"><div class="fill" style="width:${prog}%"></div></div>
+          <div class="lbl">${prog}% of material covered</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('view-courses').innerHTML=`
+    <div class="page-head">
+      <h1>Courses</h1>
+      <p>Enrolled this quarter · 7 courses · 34 ECTS total</p>
+    </div>
+    <div class="course-grid">${cards}</div>`;
+}
+function courseDays(c){
+  const map={oop:'Mon & Thu',calc:'Tue',la:'Tue',ads:'Mon',rl:'Wed',co:'Thu',wdt:'Wed'};
+  const found=Object.keys(COURSES).find(k=>COURSES[k]===c);
+  return map[found]||'Weekly';
+}
+
+/* ============ Render: Messages ============ */
+function initialsOf(name){
+  return name.split(' ').filter(w=>/[A-Za-z]/.test(w[0])).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+}
+function updateUnreadUI(){
+  const n=MESSAGES.filter(m=>m.unread).length;
+  const badge=document.getElementById('navBadge');
+  const dot=document.getElementById('topDot');
+  if(badge){badge.textContent=n;badge.style.display=n?'grid':'none';}
+  if(dot){dot.style.display=n?'block':'none';}
+}
+function renderMessages(){
+  const unread=MESSAGES.filter(m=>m.unread).length;
+  const rows = MESSAGES.map((m,i)=>{
+    return `<div class="msg ${m.unread?'unread':''}" onclick="openMessage(${i})">
+      <div class="mav" style="background:${m.color}">${initialsOf(m.from)}</div>
+      <div class="mbody">
+        <div class="mtop"><span class="mfrom">${m.from}</span><span class="mdate">${fmtDate(m.date)}</span></div>
+        <div class="msubj">${m.subj}</div>
+        <div class="mprev">${m.prev}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('view-messages').innerHTML=`
+    <div class="page-head">
+      <h1>Messages</h1>
+      <p>Inbox · ${unread} unread</p>
+    </div>
+    <div class="card" style="overflow:hidden">${rows}</div>`;
+  updateUnreadUI();
+}
+function openMessage(i){
+  const m=MESSAGES[i];
+  m.unread=false;
+  updateUnreadUI();
+  document.getElementById('view-messages').innerHTML=`
+    <button class="backbtn" onclick="renderMessages()">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Back to inbox
+    </button>
+    <div class="card card-pad">
+      <div class="msg-detail-head">
+        <div class="mav" style="background:${m.color}">${initialsOf(m.from)}</div>
+        <div>
+          <h2>${m.subj}</h2>
+          <div class="meta">${m.from} · ${fmtDate(m.date)}</div>
+        </div>
+      </div>
+      <div class="msg-detail-body">${m.body}</div>
+    </div>`;
+  document.querySelector('.content')?.scrollTo(0,0);
+}
+
+/* ============ Navigation ============ */
+const RENDER = {dashboard:renderDashboard,schedule:renderSchedule,grades:renderGrades,events:renderEvents,messages:renderMessages};
+function go(view){
+  document.querySelectorAll('.navitem[data-view]').forEach(n=>n.classList.toggle('active',n.dataset.view===view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  if(RENDER[view]) RENDER[view]();
+  document.querySelector('.content')?.scrollTo(0,0);
+}
+
+/* initial render of every view */
+renderDashboard(); renderSchedule(); renderGrades(); renderEvents(); renderMessages();
+updateUnreadUI();
+</script>
+</body>
+</html>
